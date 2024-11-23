@@ -20,9 +20,6 @@ export async function createNoteAction(
     region: process.env.REACT_APP_AWS_REGION,
   };
 
-  console.log(config);
-  console.log(process.env.REACT_APP_NOTES_TABLE_NAME)
-
   const client = new DynamoDBClient(config);
   const newNote = queryData.get('note');
 
@@ -45,10 +42,10 @@ export async function createNoteAction(
     const putItemCommand = new PutItemCommand(putInput);
     const putItemResponse = await client.send(putItemCommand);
 
-    console.log(putItemResponse);
-
     if (putItemResponse.$metadata.httpStatusCode === 200) {
-      console.log('Successfully added it to le db');
+      return {
+        content: newNote,
+      };
     } else {
       console.error('Failed to put item');
       throw new Error('Response was not 200');
@@ -60,8 +57,4 @@ export async function createNoteAction(
       error: 'Failed to create note',
     };
   }
-
-  return {
-    content: newNote,
-  };
 }
